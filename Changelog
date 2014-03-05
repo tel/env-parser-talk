@@ -1,3 +1,11 @@
+* Implemented a version of Parser which fits this new interface. This required
+  writing a custom monad implementation and using lookupEnv over getEnv.
+  * Gets the tests to pass
+
+* Created an explicit declaration of Env.parse so that we can attach 
+  documentation to it.
+
+---
 
 * Changed the semantics of `Env.parse` to report errors purely instead of relying 
   on exceptions
