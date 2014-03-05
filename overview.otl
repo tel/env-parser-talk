@@ -13,6 +13,9 @@ env-parser-talk
 		[X] cabal sandbox
 		[X] cabal install --only-dependencies
 	Initial sketch
+		[X] Example module
+			[X] Don't include it in cabal and it won't get distributed
+			[X] Stub out just enough of the type information of the module that the example compiles
 		[_] Build our own Monad
 			Run command drives semantics of our monad
 			; runParser :: Parser a -> IO a
@@ -20,9 +23,6 @@ env-parser-talk
 			"Run" it
 		[_] stylish-haskell
 			like `go fmt`
-		[_] Example module
-			[_] Build little bash file to introduce a working env
-			Don't include it in cabal and it won't get distributed
 		[_] Type-check
 		[_] Compile
 		[_] CLI test

@@ -1,4 +1,10 @@
 
+* Created an example file (src/Example.hs) which outlines the intended usage
+  * Right now we use a monadic interface
+  * we'll see the limitations inherent in this interface in time...
+
+---
+
 * Ran cabal sandbox init and cabal installed the current zero dependencies
   * this creates a cabal.sandbox.config file, so we're gitignoring that now
 
