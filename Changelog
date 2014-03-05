@@ -1,3 +1,8 @@
+* Added a monadic, QuickCheck-style test which checks that for any random 
+  value stored in the environment at a random name we can recover that value.
+
+---
+
 * Added a few HUnit-style tests to tests/Spec.hs to indicate expected successes 
   and failures in parsing the environment.
 

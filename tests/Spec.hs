@@ -1,8 +1,16 @@
 
 import           Control.Monad
 import qualified System.Environment.Parser as Env
+import           System.Posix.Env
 import           Test.Hspec
 import           Test.Hspec.Expectations
+import           Test.QuickCheck
+import           Test.QuickCheck.Monadic
+
+-- | Generate a random, gibberish, @[a-zA-Z]@, and non-empty \"name\" of
+-- minimally-bounded length.
+arbitraryName :: Int -> Gen String
+arbitraryName len = listOf (oneof [choose ('a', 'z'), choose ('A', 'Z')]) `suchThat` \n -> length n > len
 
 main :: IO ()
 main = hspec $ do
@@ -14,4 +22,11 @@ main = hspec $ do
     -- error-throwing failure API, but for now here it is.
     it "should not be able to find the \"da39a3ee5e6b4b0d3255bfef95601890afd80709\" variable" $ do
       Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709") `shouldThrow` anyIOException
+
+    it "should have that (setEnv k v >> Env.get k ===> v) for all k" $ monadicIO $ do
+      name <- pick (arbitraryName 6)
+      val  <- pick (arbitraryName 20)
+      val' <- run $ do setEnv name val True -- overwrites random ENV variables...
+                       Env.parse (Env.get name)
+      assert (val == val')
 

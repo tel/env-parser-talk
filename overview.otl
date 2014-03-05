@@ -35,8 +35,8 @@ env-parser-talk
 		[X] Cabal test-suite
 		[X] `cabal repl tests` [UNDOCUMENTED]
 		[X] HUnit tests
-		[_] QuickCheck tests
-			[_] use putEnv
+		[X] QuickCheck tests
+			[X] use putEnv
 		[X] Not TDD, whoops...
 		: I'm not a TDD fanatic, but I do like it. That said, I find that 
 		: some of the primary advantages of TDD occur also in pure FP.
