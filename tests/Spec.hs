@@ -21,12 +21,13 @@ main = hspec $ do
     -- This test is unstable since we'd like to eliminate the
     -- error-throwing failure API, but for now here it is.
     it "should not be able to find the \"da39a3ee5e6b4b0d3255bfef95601890afd80709\" variable" $ do
-      Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709") `shouldThrow` anyIOException
+      Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709") 
+        `shouldReturn` (Left "da39a3ee5e6b4b0d3255bfef95601890afd80709")
 
     it "should have that (setEnv k v >> Env.get k ===> v) for all k" $ monadicIO $ do
       name <- pick (arbitraryName 6)
       val  <- pick (arbitraryName 20)
       val' <- run $ do setEnv name val True -- overwrites random ENV variables...
                        Env.parse (Env.get name)
-      assert (val == val')
+      assert (Right val == val')
 

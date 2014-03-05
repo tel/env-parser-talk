@@ -1,3 +1,10 @@
+
+* Changed the semantics of `Env.parse` to report errors purely instead of relying 
+  on exceptions
+  * Updated the Spec to account for this as well
+
+---
+
 * Added a monadic, QuickCheck-style test which checks that for any random 
   value stored in the environment at a random name we can recover that value.
 

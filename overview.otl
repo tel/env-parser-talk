@@ -46,11 +46,10 @@ env-parser-talk
 		: In this case I haven't done this much, but that has more to do with
 		: simplifying the presentation than anything else.
 	Impv: Catch missing ENV failures
-		[_] Change return of run from `IO a` to `IO (Either String a)`
+		[X] Change return of run from `IO a` to `IO (Either String a)`
 			We want to account for the possibility of failure
+		[X] Update tests
 		[_] Rewrite our `IO` wrapper to stop on errors
-		[_] Update tests
-		[_] Update example module
 		[_] Deficiencies
 			I'd like to interpret ENV values as things other than strings (deferred)
 			It'd be nice if we knew *all* the missing variables
