@@ -1,0 +1,84 @@
+
+env-parser-talk
+	Project setup
+		[X] cabal init
+			; ghc-options: -Wall -fwarn-tabs
+			extra-source-files: Changelog [UNDOCUMENTED]
+				Named one of:
+					ChangeLog
+					CHANGELOG
+					CHANGE_LOG
+					Changelog
+					changelog
+		[_] cabal sandbox
+		[_] cabal install --only-dependencies
+	Initial sketch
+		[_] Build our own Monad
+			Run command drives semantics of our monad
+			; runParser :: Parser a -> IO a
+			Read an environment in a subset of the IO monad
+			"Run" it
+		[_] stylish-haskell
+			like `go fmt`
+		[_] Example module
+			[_] Build little bash file to introduce a working env
+			Don't include it in cabal and it won't get distributed
+		[_] Type-check
+		[_] Compile
+		[_] CLI test
+	Haddocking
+		[_] Add module headers
+		[_] Add function and type documentation
+		[_] Compile
+	Testing
+		[_] Dev-dependencies
+			sandbox
+			--enable-tests
+			[_] Hspec
+			[_] putEnv
+		[_] Cabal test-suite
+		[_] `cabal repl tests` [UNDOCUMENTED]
+		[_] Not TDD, whoops...
+		: I'm not a TDD fanatic, but I do like it. That said, I find that 
+		: some of the primary advantages of TDD occur also in pure FP.
+		: I spend a lot of time designing testable, decomposed interfaces
+		: by simply prioritizing purity and composability.
+		:
+		: In this case I haven't done this much, but that has more to do with
+		: simplifying the presentation than anything else.
+		[_] HUnit
+		[_] QuickCheck
+	Continuous Integration
+		[_] Travis - won't go into a lot here
+		; # .travis.yml
+		; language: haskell
+	Impv: Catch missing ENV failures
+		[_] Change return of run from `IO a` to `IO (Either String a)`
+			We want to account for the possibility of failure
+		[_] Rewrite our `IO` wrapper to stop on errors
+		[_] Update tests
+		[_] Update example module
+		[_] Deficiencies
+			I'd like to interpret ENV values as things other than strings (deferred)
+			It'd be nice if we knew *all* the missing variables
+				What can't monads do
+				Our syntax is indicative of this
+				; do a <- env "FOO"  -- < stops at this line!
+				;    b <- env "BAR"
+				;    return (Conf a b)
+	Impv: Change semantics to IO (Either [String] a)
+		[_] Write the Monad instance and show that we only get the first error
+		[_] Prove that the Applicative interface is sufficient for the example
+		[_] Instantiate the obvious Monad->Applicative interface (return/ap)
+		[_] Rewrite the example code to use the Applicative interface
+			: Now since we can look into the left and right sides in parallel
+			: we can combine failures!
+		[_] Write a compliant Applicative instance
+		[_] Test the behavior in the command line
+		[_] Rewrite the tests
+	Impv: Static analysis
+		: We'd like to be able to examine all of the needed ENV variables
+		: without actually looking them up.
+		[_] Extend data type to include two choices of semantics
+		[_] Add the extra information in the `env` impl
+		[_] Write in the information passing code in the Applicative instance

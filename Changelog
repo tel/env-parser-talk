@@ -1,4 +1,26 @@
 
+---
+
+* checked to ensure that most cabal commands work now
+  * cabal configure
+  * cabal build
+  * cabal repl
+  * cabal haddock
+  * cabal check
+
+* skeleton source file at src/System/Environment/Parser.hs
+  * without this directory cabal will complain
+
+* env-parser.cabal file configured to a good default state for any project
+	* includes using the hs-source-dirs directive to pick the src dir
+	* also includes a Haddock description (see ekmett/lens for hints here)
+  * note that `cabal init` picks up Changelog and README.md as extra-source-files
+  * note also that it fills out BSD3 licenses automatically but yells otherwise
+  
+* .gitignore file for ignoring cabal configuration noise
+
+---
+
 * Makefile with `make step` command
 * Initial notes and writeup
 * This file
