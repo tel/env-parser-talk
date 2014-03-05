@@ -1,4 +1,14 @@
 
+* Used generalized newtype deriving to get a free Monad instance for
+  Parser atop IO. This instance is a little broken since it can only
+  throw full runtime errors on failure.
+  * We use record syntax to get an automatic `parse` command:
+    
+* Implemented `Env.get` using this Io-alike monad.
+  * Basically just lifts `getEnv` directly.
+
+---
+
 * Fleshed out some Haddock documentation for the interface designed thus far
   * This also includes the usual module prelude which has a special
     presentation in the Haddock files.
