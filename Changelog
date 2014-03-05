@@ -1,4 +1,7 @@
 
+* Ran cabal sandbox init and cabal installed the current zero dependencies
+  * this creates a cabal.sandbox.config file, so we're gitignoring that now
+
 ---
 
 * checked to ensure that most cabal commands work now

@@ -10,8 +10,8 @@ env-parser-talk
 					CHANGE_LOG
 					Changelog
 					changelog
-		[_] cabal sandbox
-		[_] cabal install --only-dependencies
+		[X] cabal sandbox
+		[X] cabal install --only-dependencies
 	Initial sketch
 		[_] Build our own Monad
 			Run command drives semantics of our monad
