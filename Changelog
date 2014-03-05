@@ -1,4 +1,10 @@
 
+* Fleshed out some Haddock documentation for the interface designed thus far
+  * This also includes the usual module prelude which has a special
+    presentation in the Haddock files.
+
+---
+
 * Created an example file (src/Example.hs) which outlines the intended usage
   * Right now we use a monadic interface
   * we'll see the limitations inherent in this interface in time...

@@ -16,6 +16,7 @@ env-parser-talk
 		[X] Example module
 			[X] Don't include it in cabal and it won't get distributed
 			[X] Stub out just enough of the type information of the module that the example compiles
+		[_] Add function and type documentation
 		[_] Build our own Monad
 			Run command drives semantics of our monad
 			; runParser :: Parser a -> IO a
@@ -26,10 +27,6 @@ env-parser-talk
 		[_] Type-check
 		[_] Compile
 		[_] CLI test
-	Haddocking
-		[_] Add module headers
-		[_] Add function and type documentation
-		[_] Compile
 	Testing
 		[_] Dev-dependencies
 			sandbox
