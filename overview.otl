@@ -45,10 +45,6 @@ env-parser-talk
 		:
 		: In this case I haven't done this much, but that has more to do with
 		: simplifying the presentation than anything else.
-	Continuous Integration
-		[_] Travis - won't go into a lot here
-		; # .travis.yml
-		; language: haskell
 	Impv: Catch missing ENV failures
 		[_] Change return of run from `IO a` to `IO (Either String a)`
 			We want to account for the possibility of failure
