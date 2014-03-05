@@ -34,7 +34,7 @@ env-parser-talk
 			[X] Hspec
 		[X] Cabal test-suite
 		[X] `cabal repl tests` [UNDOCUMENTED]
-		[_] HUnit tests
+		[X] HUnit tests
 		[_] QuickCheck tests
 			[_] use putEnv
 		[X] Not TDD, whoops...

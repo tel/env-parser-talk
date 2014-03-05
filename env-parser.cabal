@@ -49,6 +49,7 @@ test-suite spec
   build-depends:       base >=4.6 && <4.7
                      , env-parser-talk
                      , hspec
+                     , hspec-expectations
   hs-source-dirs:      tests
   default-language:    Haskell2010
 

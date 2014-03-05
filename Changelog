@@ -1,3 +1,10 @@
+* Added a few HUnit-style tests to tests/Spec.hs to indicate expected successes 
+  and failures in parsing the environment.
+
+  * Right now this uses the exception throwing failure mode which we'll have to
+    eliminate later.
+
+---
 
 * Added a completely trivial, HSpec-based test suite and it compiles. We'll
   build atop this to specify the application.
