@@ -1,4 +1,9 @@
 
+* Added a completely trivial, HSpec-based test suite and it compiles. We'll
+  build atop this to specify the application.
+
+---
+
 * Used generalized newtype deriving to get a free Monad instance for
   Parser atop IO. This instance is a little broken since it can only
   throw full runtime errors on failure.

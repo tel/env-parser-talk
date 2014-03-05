@@ -28,14 +28,16 @@ env-parser-talk
 		[X] Compile
 		[X] CLI test
 	Testing
-		[_] Dev-dependencies
+		[X] Dev-dependencies
 			sandbox
 			--enable-tests
-			[_] Hspec
-			[_] putEnv
-		[_] Cabal test-suite
-		[_] `cabal repl tests` [UNDOCUMENTED]
-		[_] Not TDD, whoops...
+			[X] Hspec
+		[X] Cabal test-suite
+		[X] `cabal repl tests` [UNDOCUMENTED]
+		[_] HUnit tests
+		[_] QuickCheck tests
+			[_] use putEnv
+		[X] Not TDD, whoops...
 		: I'm not a TDD fanatic, but I do like it. That said, I find that 
 		: some of the primary advantages of TDD occur also in pure FP.
 		: I spend a lot of time designing testable, decomposed interfaces
@@ -43,8 +45,6 @@ env-parser-talk
 		:
 		: In this case I haven't done this much, but that has more to do with
 		: simplifying the presentation than anything else.
-		[_] HUnit
-		[_] QuickCheck
 	Continuous Integration
 		[_] Travis - won't go into a lot here
 		; # .travis.yml
