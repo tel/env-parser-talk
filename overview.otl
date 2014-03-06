@@ -61,13 +61,14 @@ env-parser-talk
 	Impv: Change semantics to IO (Either [String] a)
 		[X] Write the Monad instance and show that we only get the first error
 		[X] Rewrite the tests
-		[_] Prove that the Applicative interface is sufficient for the example
-		[_] Rewrite the tests to use this Applicative instance
-		[_] Instantiate the obvious Monad->Applicative interface (return/ap)
-		[_] Rewrite the example code to use the Applicative interface
+		[X] Prove that the Applicative interface is sufficient for the example
+		[X] Rewrite the tests to use this Applicative instance
+		[X] Instantiate the obvious Monad->Applicative interface (return/ap)
+		[X] Rewrite the example code to use the Applicative interface
+		[X] Show that the tests still fail
+		[_] Write a compliant Applicative instance
 			: Now since we can look into the left and right sides in parallel
 			: we can combine failures!
-		[_] Write a compliant Applicative instance
 		[_] Test the behavior in the command line
 	Impv: Static analysis
 		: We'd like to be able to examine all of the needed ENV variables

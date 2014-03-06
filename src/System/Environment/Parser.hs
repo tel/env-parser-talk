@@ -1,5 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
 -- |
 -- Module      :  System.Environment.Parser
 -- Copyright   :  (C) 2014 Joseph Abrahamson
@@ -11,6 +9,8 @@
 
 module System.Environment.Parser where
 
+import           Control.Applicative
+import           Control.Monad
 import           System.Environment
 
 -- | The 'Parser' type is an effectual context where you can use ENV
@@ -24,6 +24,13 @@ instance Monad Parser where
     case ea of
       Left err -> return $ Left err
       Right a  -> parse  $ f a
+
+instance Functor Parser where
+  fmap = liftM
+
+instance Applicative Parser where
+  pure  = return
+  (<*>) = ap
 
 -- | Runs a 'Parser' in the 'IO' monad, looking up the required environment
 -- variables and using them to build the final value. In the event that

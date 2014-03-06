@@ -1,4 +1,5 @@
 
+import           Control.Applicative
 import           Control.Monad
 import qualified System.Environment.Parser as Env
 import           System.Posix.Env
@@ -21,13 +22,11 @@ main = hspec $ do
     -- This test is unstable since we'd like to eliminate the
     -- error-throwing failure API, but for now here it is.
     it "should not be able to find the \"da39a3ee5e6b4b0d3255bfef95601890afd80709\" variable" $ do
-      Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709") 
+      Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709")
         `shouldReturn` (Left ["da39a3ee5e6b4b0d3255bfef95601890afd80709"])
 
     it "should report multiple missing variables" $ do
-      Env.parse (do v1 <- Env.get "FIRST_MISSING_VALUE"
-                    v2 <- Env.get "SECOND_MISSING_VALUE"
-                    return (v1, v2))
+      Env.parse ((,) <$> Env.get "FIRST_MISSING_VALUE" <*> Env.get "SECOND_MISSING_VALUE")
         `shouldReturn` (Left ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"])
 
     it "should have that (setEnv k v >> Env.get k ===> v) for all k" $ monadicIO $ do

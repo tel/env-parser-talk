@@ -1,6 +1,7 @@
 
 module Example where
 
+import           Control.Applicative
 import qualified System.Environment.Parser as Env
 
 
@@ -18,13 +19,7 @@ data ConfBad = ConfBad
   deriving ( Show )
 
 confGood :: Env.Parser ConfGood
-confGood = do
-  pt <- Env.get "PATH"
-  tm <- Env.get "TERM"
-  return (ConfGood pt tm)
+confGood = ConfGood <$> Env.get "PATH" <*> Env.get "TERM"
 
 confBad :: Env.Parser ConfBad
-confBad = do
-  sN <- Env.get "SERVER_NAME"
-  tZ <- Env.get "TIME_ZONE"
-  return (ConfBad sN tZ)
+confBad = ConfBad <$> Env.get "SERVER_NAME" <*> Env.get "TIME_ZONE"
