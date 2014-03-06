@@ -1,3 +1,8 @@
+* Wrote some nice Haddock module documentation for Parser.hs
+* Added an explicit export list in order to hide the constructor for Parser
+
+---
+
 * Added another semantics to the Parser by adjoining it as a Pair.
   * The new semantics computes all the needed variable names without
     running the Parser

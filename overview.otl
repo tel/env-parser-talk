@@ -76,3 +76,9 @@ env-parser-talk
 		[X] Extend data type to include two choices of semantics
 		[X] Add the extra information in the `env` impl
 		[X] Write in the information passing code in the Applicative instance
+	Impv: Clean up module exports
+		: We'd like to hide various internal representations in order to make
+		: the usage of this module clear.
+		[X] Write an explicit export list
+			: this constrains the ways that the Parser can be used
+		[X] Document the intended usage for Haddock
