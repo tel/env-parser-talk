@@ -22,7 +22,13 @@ main = hspec $ do
     -- error-throwing failure API, but for now here it is.
     it "should not be able to find the \"da39a3ee5e6b4b0d3255bfef95601890afd80709\" variable" $ do
       Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709") 
-        `shouldReturn` (Left "da39a3ee5e6b4b0d3255bfef95601890afd80709")
+        `shouldReturn` (Left ["da39a3ee5e6b4b0d3255bfef95601890afd80709"])
+
+    it "should report multiple missing variables" $ do
+      Env.parse (do v1 <- Env.get "FIRST_MISSING_VALUE"
+                    v2 <- Env.get "SECOND_MISSING_VALUE"
+                    return (v1, v2))
+        `shouldReturn` (Left ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"])
 
     it "should have that (setEnv k v >> Env.get k ===> v) for all k" $ monadicIO $ do
       name <- pick (arbitraryName 6)

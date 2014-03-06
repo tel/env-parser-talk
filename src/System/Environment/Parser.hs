@@ -15,7 +15,7 @@ import           System.Environment
 
 -- | The 'Parser' type is an effectual context where you can use ENV
 -- information to build a value containing configuration information.
-newtype Parser a = Parser ( IO (Either String a) )
+newtype Parser a = Parser ( IO (Either [String] a) )
 
 instance Monad Parser where
   return a = Parser (return (Right a))
@@ -28,7 +28,7 @@ instance Monad Parser where
 -- | Runs a 'Parser' in the 'IO' monad, looking up the required environment
 -- variables and using them to build the final value. In the event that
 -- lookup fails this reports the name of the missing variable.
-parse :: Parser a -> IO (Either String a)
+parse :: Parser a -> IO (Either [String] a)
 parse (Parser ioe) = ioe
 
 -- | Look up a key in the ENV. This operation may fail if the key is
@@ -37,5 +37,5 @@ get :: String -> Parser String
 get s = Parser $ do
   ma <- lookupEnv s
   return $ case ma of
-    Nothing -> Left s
+    Nothing -> Left [s]
     Just a  -> Right a

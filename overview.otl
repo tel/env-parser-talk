@@ -59,15 +59,16 @@ env-parser-talk
 				;    b <- env "BAR"
 				;    return (Conf a b)
 	Impv: Change semantics to IO (Either [String] a)
-		[_] Write the Monad instance and show that we only get the first error
+		[X] Write the Monad instance and show that we only get the first error
+		[X] Rewrite the tests
 		[_] Prove that the Applicative interface is sufficient for the example
+		[_] Rewrite the tests to use this Applicative instance
 		[_] Instantiate the obvious Monad->Applicative interface (return/ap)
 		[_] Rewrite the example code to use the Applicative interface
 			: Now since we can look into the left and right sides in parallel
 			: we can combine failures!
 		[_] Write a compliant Applicative instance
 		[_] Test the behavior in the command line
-		[_] Rewrite the tests
 	Impv: Static analysis
 		: We'd like to be able to examine all of the needed ENV variables
 		: without actually looking them up.

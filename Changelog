@@ -1,3 +1,9 @@
+* Changed the signature of Env.Parser to return a list of missing values
+* Added a specification that the parser should return all of the missing values
+  not just the first one. This spec fails, however.
+
+---
+
 * Implemented a version of Parser which fits this new interface. This required
   writing a custom monad implementation and using lookupEnv over getEnv.
   * Gets the tests to pass
