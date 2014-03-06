@@ -1,3 +1,11 @@
+* Reimplemented the Parser using the free applicative interface.
+  This moves around a bunch of code but shouldn't change the ultimate 
+  package API or any of the behavior.
+* Changed the public S.E.Parser interface to just re-export an internal one,
+  hiding some details.
+
+---
+
 * Added a local module implementing free applicatives so as to
   not invoke a dependency on `free`.
 

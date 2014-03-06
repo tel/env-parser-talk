@@ -86,8 +86,8 @@ env-parser-talk
 		: Let's go ahead and fully generalize the analytical side of this by 
 		: implementing it as a free applicative.
 		[X] Build a free applicative internal module
-		[_] Rewrite the Parser interface to use the free applicative
+		[X] Rewrite the Parser interface to use the free applicative
 			Hide the new implementation in an internal module
-		[_] Write parse and deps as evaluators
+		[X] Write parse and deps as evaluators
 		[_] Build a purely applicative either
 		[_] Use it as the natural implementation of several of these things
