@@ -10,27 +10,25 @@
 module System.Environment.Parser where
 
 import           Control.Applicative
-import           Control.Monad
 import           System.Environment
 
 -- | The 'Parser' type is an effectual context where you can use ENV
 -- information to build a value containing configuration information.
 newtype Parser a = Parser ( IO (Either [String] a) )
 
-instance Monad Parser where
-  return a = Parser (return (Right a))
-  Parser ioa >>= f = Parser $ do
-    ea <- ioa
-    case ea of
-      Left err -> return $ Left err
-      Right a  -> parse  $ f a
-
 instance Functor Parser where
-  fmap = liftM
+  fmap f (Parser io) = Parser (fmap (fmap f) io)
 
 instance Applicative Parser where
-  pure  = return
-  (<*>) = ap
+  pure a = Parser (pure (pure a))
+  Parser iof <*> Parser iox = Parser $ do
+    ef <- iof
+    ex <- iox
+    return $ case (ef, ex) of
+      (Right f, Right x) -> Right (f x)
+      (Left e1, Left e2) -> Left (e1 ++ e2) -- < This is important!
+      (Left e , _      ) -> Left e
+      (_      , Left e ) -> Left e
 
 -- | Runs a 'Parser' in the 'IO' monad, looking up the required environment
 -- variables and using them to build the final value. In the event that

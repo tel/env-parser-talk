@@ -66,10 +66,10 @@ env-parser-talk
 		[X] Instantiate the obvious Monad->Applicative interface (return/ap)
 		[X] Rewrite the example code to use the Applicative interface
 		[X] Show that the tests still fail
-		[_] Write a compliant Applicative instance
+		[X] Write a compliant Applicative instance
 			: Now since we can look into the left and right sides in parallel
 			: we can combine failures!
-		[_] Test the behavior in the command line
+		[X] Test the behavior in the command line
 	Impv: Static analysis
 		: We'd like to be able to examine all of the needed ENV variables
 		: without actually looking them up.
