@@ -14,14 +14,14 @@ import           System.Environment
 
 -- | The 'Parser' type is an effectual context where you can use ENV
 -- information to build a value containing configuration information.
-newtype Parser a = Parser ( IO (Either [String] a) )
+data Parser a = Parser [String] ( IO (Either [String] a) )
 
 instance Functor Parser where
-  fmap f (Parser io) = Parser (fmap (fmap f) io)
+  fmap f (Parser ns io) = Parser ns (fmap (fmap f) io)
 
 instance Applicative Parser where
-  pure a = Parser (pure (pure a))
-  Parser iof <*> Parser iox = Parser $ do
+  pure a = Parser [] (pure (pure a))
+  Parser ns1 iof <*> Parser ns2 iox = Parser (ns1 ++ ns2) $ do
     ef <- iof
     ex <- iox
     return $ case (ef, ex) of
@@ -34,12 +34,17 @@ instance Applicative Parser where
 -- variables and using them to build the final value. In the event that
 -- lookup fails this reports the name of the missing variable.
 parse :: Parser a -> IO (Either [String] a)
-parse (Parser ioe) = ioe
+parse (Parser _ ioe) = ioe
+
+-- | Compute all ENV variables which are required in order to run
+-- a 'Parser'.
+deps :: Parser a -> [String]
+deps (Parser ns _) = ns
 
 -- | Look up a key in the ENV. This operation may fail if the key is
 -- missing.
 get :: String -> Parser String
-get s = Parser $ do
+get s = Parser [s] $ do
   ma <- lookupEnv s
   return $ case ma of
     Nothing -> Left [s]

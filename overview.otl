@@ -73,6 +73,6 @@ env-parser-talk
 	Impv: Static analysis
 		: We'd like to be able to examine all of the needed ENV variables
 		: without actually looking them up.
-		[_] Extend data type to include two choices of semantics
-		[_] Add the extra information in the `env` impl
-		[_] Write in the information passing code in the Applicative instance
+		[X] Extend data type to include two choices of semantics
+		[X] Add the extra information in the `env` impl
+		[X] Write in the information passing code in the Applicative instance

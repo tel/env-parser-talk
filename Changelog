@@ -1,3 +1,10 @@
+* Added another semantics to the Parser by adjoining it as a Pair.
+  * The new semantics computes all the needed variable names without
+    running the Parser
+* Introduced spec tests
+
+---
+
 * Removed the Monad instance entirely and reimplemented the 
   Applicative instance directly
   * Now that we examine each side of `(<*>)` together we can 

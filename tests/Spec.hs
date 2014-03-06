@@ -36,3 +36,6 @@ main = hspec $ do
                        Env.parse (Env.get name)
       assert (Right val == val')
 
+    it "should find all of the needed names as a pure computation" $ do
+      Env.deps ((,) <$> Env.get "FIRST_MISSING_VALUE" <*> Env.get "SECOND_MISSING_VALUE")
+        `shouldBe` ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"]
