@@ -82,3 +82,12 @@ env-parser-talk
 		[X] Write an explicit export list
 			: this constrains the ways that the Parser can be used
 		[X] Document the intended usage for Haddock
+	Impv: (The big one) free applicatives
+		: Let's go ahead and fully generalize the analytical side of this by 
+		: implementing it as a free applicative.
+		[X] Build a free applicative internal module
+		[_] Rewrite the Parser interface to use the free applicative
+			Hide the new implementation in an internal module
+		[_] Write parse and deps as evaluators
+		[_] Build a purely applicative either
+		[_] Use it as the natural implementation of several of these things

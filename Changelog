@@ -1,3 +1,8 @@
+* Added a local module implementing free applicatives so as to
+  not invoke a dependency on `free`.
+
+---
+
 * Wrote some nice Haddock module documentation for Parser.hs
 * Added an explicit export list in order to hide the constructor for Parser
 
