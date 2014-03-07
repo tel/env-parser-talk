@@ -1,3 +1,8 @@
+* Added a convenience destructor collMay for converting Maybes to Collects.
+  * Used this to simplify implementation of both Env.parse and Env.test.
+
+---
+
 * Quickly implemented a mock interpreter for testing using the new
   free applicative interpreter mode.
 

@@ -36,6 +36,9 @@ miss = Collect . Left
 have :: a -> Collect e a
 have = Collect . Right
 
+-- | Uses 'maybe' to convert a 'Maybe' to a 'Collect'.
+collMay :: e -> (a -> b) -> Maybe a -> Collect e b
+collMay e f = maybe (miss e) (have . f)
 
 -- | Right-to-left composition of functors. The composition of applicative
 -- functors is always applicative, but the composition of monads is not

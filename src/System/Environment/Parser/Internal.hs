@@ -45,7 +45,7 @@ parse :: Parser a -> IO (Either [String] a)
 parse = fmap collect . getCompose . raise phi . unParser where
   phi :: ParserF x -> (IO :.: Collect [String]) x
   phi (Get s go) = 
-    Compose (maybe (miss [s]) (have . go) <$> lookupEnv s)
+    Compose (collMay [s] go <$> lookupEnv s)
 
 -- | Evaluates a 'Parser' purely in a fake environment. Compare this with
 -- 'parse'. In the event that -- lookup fails this reports the name of the
@@ -53,4 +53,4 @@ parse = fmap collect . getCompose . raise phi . unParser where
 test :: (String -> Maybe String) -> Parser a -> Either [String] a
 test find (Parser p) = collect (raise phi p) where
   phi :: ParserF x -> Collect [String] x
-  phi (Get s go) = maybe (miss [s]) (have . go) (find s)
+  phi (Get s go) = collMay [s] go (find s)
