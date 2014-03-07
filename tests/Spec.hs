@@ -29,11 +29,18 @@ main = hspec $ do
     -- error-throwing failure API, but for now here it is.
     it "should not be able to find the \"da39a3ee5e6b4b0d3255bfef95601890afd80709\" variable" $ do
       Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709")
-        `shouldReturn` (Left ["da39a3ee5e6b4b0d3255bfef95601890afd80709"])
+        `shouldReturn` 
+        (Left [( "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+               , Env.MissingName
+               )])
 
     it "should report multiple missing variables" $ do
-      Env.parse ((,) <$> Env.get "FIRST_MISSING_VALUE" <*> Env.get "SECOND_MISSING_VALUE")
-        `shouldReturn` (Left ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"])
+      Env.parse ((,) <$> Env.get "FIRST_MISSING_VALUE" 
+                     <*> Env.get "SECOND_MISSING_VALUE")
+        `shouldReturn` 
+          (Left [ ( "FIRST_MISSING_VALUE", Env.MissingName )
+                , ( "SECOND_MISSING_VALUE", Env.MissingName )
+                ])
 
     it "holds that (setEnv k v >> Env.get k ===> v) for all k" $
       monadicIO $ do
@@ -49,8 +56,10 @@ main = hspec $ do
                     <*> Env.get "SECOND_MISSING_VALUE")
         `shouldBe` ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"]
 
-    it "holds that (Left . Env.deps == Env.test (const Nothing))" $
+    it "holds that (Left . map (,Env.MissingName) . Env.deps == Env.test (const Nothing))" $
       property $ forAll (arbitraryNameBS 6) $ \e ->
         let s = Env.get e
-        in Left (Env.deps s) == Env.test (const Nothing) s
+            depErrs  = map (\n -> (n, Env.MissingName)) (Env.deps s)
+            testErrs = Env.test (const Nothing) s
+        in Left depErrs == testErrs
 

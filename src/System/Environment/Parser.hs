@@ -46,6 +46,7 @@
 module System.Environment.Parser (
 
     Parser
+  , Error (..)
   , parse
   , test
   , deps

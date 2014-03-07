@@ -97,6 +97,6 @@ env-parser-talk
 		: cross-platform compatibility. This is sufficient for me.
 		[X] Use the 'unix' package
 		[X] Use the 'bytestring package
-		[_] Upgrade parser to use ByteString
-		[_] Expand error types to include parse errors
+		[X] Upgrade parser to use ByteString
+		[X] Expand error types to include parse errors
 		[_] Create a typeclass for ENV parseable types
