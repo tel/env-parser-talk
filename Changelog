@@ -1,3 +1,10 @@
+* Changed the basic Env.get to work over ByteStrings instead of Strings
+  * We'll eventually get basic String behavior back again, but we drop it
+    for a bit so that we can build faster parsers
+  * Reimplemented Example and Spec to use this new format
+
+---
+
 * Added a convenience destructor collMay for converting Maybes to Collects.
   * Used this to simplify implementation of both Env.parse and Env.test.
 

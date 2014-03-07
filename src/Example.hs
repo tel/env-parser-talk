@@ -2,19 +2,20 @@
 module Example where
 
 import           Control.Applicative
+import qualified Data.ByteString           as S
 import qualified System.Environment.Parser as Env
 
 
 
 data ConfGood = ConfGood
-  { path :: String
-  , term :: String
+  { path :: S.ByteString
+  , term :: S.ByteString
   }
   deriving ( Show )
 
 data ConfBad = ConfBad
-  { serverName :: String
-  , timeZone   :: String
+  { serverName :: S.ByteString
+  , timeZone   :: S.ByteString
   }
   deriving ( Show )
 

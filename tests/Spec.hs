@@ -1,8 +1,11 @@
+{-# LANGUAGE OverloadedStrings #-}
 
 import           Control.Applicative
 import           Control.Monad
-import qualified System.Environment.Parser as Env
-import           System.Posix.Env
+import qualified Data.ByteString             as S
+import qualified Data.ByteString.Char8       as S8
+import qualified System.Environment.Parser   as Env
+import           System.Posix.Env.ByteString
 import           Test.Hspec
 import           Test.Hspec.Expectations
 import           Test.QuickCheck
@@ -12,6 +15,9 @@ import           Test.QuickCheck.Monadic
 -- minimally-bounded length.
 arbitraryName :: Int -> Gen String
 arbitraryName len = listOf (oneof [choose ('a', 'z'), choose ('A', 'Z')]) `suchThat` \n -> length n > len
+
+arbitraryNameBS :: Int -> Gen S.ByteString
+arbitraryNameBS = fmap S8.pack . arbitraryName
 
 main :: IO ()
 main = hspec $ do
@@ -29,22 +35,22 @@ main = hspec $ do
       Env.parse ((,) <$> Env.get "FIRST_MISSING_VALUE" <*> Env.get "SECOND_MISSING_VALUE")
         `shouldReturn` (Left ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"])
 
-    it "holds that (setEnv k v >> Env.get k ===> v) for all k" $ 
+    it "holds that (setEnv k v >> Env.get k ===> v) for all k" $
       monadicIO $ do
-        name <- pick (arbitraryName 6)
-        val  <- pick (arbitraryName 20)
+        name <- pick (arbitraryNameBS 6)
+        val  <- pick (arbitraryNameBS 20)
         -- overwrites random ENV variables...
-        val' <- run $ do setEnv name val True 
+        val' <- run $ do setEnv name val True
                          Env.parse (Env.get name)
         assert (Right val == val')
 
     it "should find all of the needed names as a pure computation" $ do
-      Env.deps ((,) <$> Env.get "FIRST_MISSING_VALUE" 
+      Env.deps ((,) <$> Env.get "FIRST_MISSING_VALUE"
                     <*> Env.get "SECOND_MISSING_VALUE")
         `shouldBe` ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"]
 
-    it "holds that (Left . Env.deps == Env.test (const Nothing))" $ 
-      property $ \e -> 
+    it "holds that (Left . Env.deps == Env.test (const Nothing))" $
+      property $ forAll (arbitraryNameBS 6) $ \e ->
         let s = Env.get e
         in Left (Env.deps s) == Env.test (const Nothing) s
 

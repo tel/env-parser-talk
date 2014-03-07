@@ -92,3 +92,11 @@ env-parser-talk
 		[X] Build a purely applicative either
 		[X] Use it as the natural implementation of several of these things
 		[X] Build out the Env.test interpreter
+	Impv: Lift types to ByteString
+		: String -> Parser String is OK, but we can do better by giving up
+		: cross-platform compatibility. This is sufficient for me.
+		[X] Use the 'unix' package
+		[X] Use the 'bytestring package
+		[_] Upgrade parser to use ByteString
+		[_] Expand error types to include parse errors
+		[_] Create a typeclass for ENV parseable types
