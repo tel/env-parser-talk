@@ -1,3 +1,8 @@
+* Quickly implemented a mock interpreter for testing using the new
+  free applicative interpreter mode.
+
+---
+
 * Vastly simplified the free applicative interpreters of Env.parse and 
   Env.deps by using FreeA's raise and some well-chosen basic Applicatives
   * Included two basic applicatives 

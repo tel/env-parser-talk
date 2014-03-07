@@ -29,13 +29,22 @@ main = hspec $ do
       Env.parse ((,) <$> Env.get "FIRST_MISSING_VALUE" <*> Env.get "SECOND_MISSING_VALUE")
         `shouldReturn` (Left ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"])
 
-    it "should have that (setEnv k v >> Env.get k ===> v) for all k" $ monadicIO $ do
-      name <- pick (arbitraryName 6)
-      val  <- pick (arbitraryName 20)
-      val' <- run $ do setEnv name val True -- overwrites random ENV variables...
-                       Env.parse (Env.get name)
-      assert (Right val == val')
+    it "holds that (setEnv k v >> Env.get k ===> v) for all k" $ 
+      monadicIO $ do
+        name <- pick (arbitraryName 6)
+        val  <- pick (arbitraryName 20)
+        -- overwrites random ENV variables...
+        val' <- run $ do setEnv name val True 
+                         Env.parse (Env.get name)
+        assert (Right val == val')
 
     it "should find all of the needed names as a pure computation" $ do
-      Env.deps ((,) <$> Env.get "FIRST_MISSING_VALUE" <*> Env.get "SECOND_MISSING_VALUE")
+      Env.deps ((,) <$> Env.get "FIRST_MISSING_VALUE" 
+                    <*> Env.get "SECOND_MISSING_VALUE")
         `shouldBe` ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"]
+
+    it "holds that (Left . Env.deps == Env.test (const Nothing))" $ 
+      property $ \e -> 
+        let s = Env.get e
+        in Left (Env.deps s) == Env.test (const Nothing) s
+

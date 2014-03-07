@@ -91,3 +91,4 @@ env-parser-talk
 		[X] Write parse and deps as evaluators
 		[X] Build a purely applicative either
 		[X] Use it as the natural implementation of several of these things
+		[X] Build out the Env.test interpreter
