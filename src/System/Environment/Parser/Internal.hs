@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveFunctor              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE TypeOperators              #-}
 
 -- |
 -- Module      :  System.Environment.Parser.Internal
@@ -14,6 +15,7 @@ module System.Environment.Parser.Internal where
 
 import           Control.Applicative
 import           System.Environment
+import           System.Environment.Parser.Internal.Collect
 import           System.Environment.Parser.Internal.FreeA
 
 -- | The signature of the 'Parser' applicative.
@@ -34,17 +36,13 @@ get s = Parser . one $ Get s id
 -- | Compute all ENV variables which are required in order to run
 -- a 'Parser'.
 deps :: Parser a -> [String]
-deps (Parser (Pure _)) = []
-deps (Parser (Get s _ :$: free)) = s : deps (Parser free)
+deps = getConst . raise (\(Get s _) -> Const [s]) . unParser
 
+-- | Runs a 'Parser' in the 'IO' monad, looking up the required environment
+-- variables and using them to build the final value. In the event that
+-- lookup fails this reports the name of the missing variable.
 parse :: Parser a -> IO (Either [String] a)
-parse (Parser (Pure a)) = return (Right a)
-parse (Parser (Get s f :$: free)) = do
-  mayVal  <- lookupEnv s
-  eitRest <- parse (Parser free)
-  return $ case (mayVal, eitRest) of
-    (Just val, Right rest) -> Right (f val rest)
-    (Nothing , Left es   ) -> Left (s:es)
-    (Nothing , _         ) -> Left [s]
-    (_       , Left es   ) -> Left es
-
+parse = fmap collect . getCompose . raise phi . unParser where
+  phi :: ParserF x -> (IO :.: Collect [String]) x
+  phi (Get s go) = 
+    Compose (maybe (miss [s]) (have . go) <$> lookupEnv s)

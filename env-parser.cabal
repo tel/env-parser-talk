@@ -37,6 +37,7 @@ library
   exposed-modules:
     System.Environment.Parser
     System.Environment.Parser.Internal
+    System.Environment.Parser.Internal.Collect
     System.Environment.Parser.Internal.FreeA
 
   build-depends:       base >=4.6 && <4.7

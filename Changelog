@@ -1,3 +1,11 @@
+* Vastly simplified the free applicative interpreters of Env.parse and 
+  Env.deps by using FreeA's raise and some well-chosen basic Applicatives
+  * Included two basic applicatives 
+    * Collect --- the "purely applicative sum"
+    * Compose --- right-to-left functor composition
+
+---
+
 * Reimplemented the Parser using the free applicative interface.
   This moves around a bunch of code but shouldn't change the ultimate 
   package API or any of the behavior.
