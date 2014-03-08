@@ -25,8 +25,8 @@ import           System.Posix.Env.ByteString
 
 -- | The signature of the 'Parser' applicative.
 data ParserF x
-  = Get (Slot x)
-        (S.ByteString -> Either String x)
+  = Get {-# UNPACK #-} !(Slot x)
+                       !(S.ByteString -> Either String x)
 
 getSlot :: ParserF a -> Slot a
 getSlot (Get s _) = s

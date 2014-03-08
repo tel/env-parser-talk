@@ -40,9 +40,9 @@ import qualified Data.Text           as T
 -- > "TIME_ZONE" & Env.doc .~ "The default time zone"
 -- >             & Env.def .~ "America/New_York"
 data Slot a = Slot 
-  { getKey :: S.ByteString 
-  , getDoc :: Maybe T.Text
-  , getDef :: Maybe a
+  { getKey :: {-# UNPACK #-} !S.ByteString   -- ^ The environment variable name
+  , getDoc ::                !(Maybe T.Text) -- ^ Description of the value
+  , getDef ::                !(Maybe a)      -- ^ A default value
   }
   deriving ( Eq, Ord, Show, Read, Functor )
 
