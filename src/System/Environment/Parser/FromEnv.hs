@@ -79,3 +79,6 @@ instance FromEnv Scientific where fromEnv = fractionalParse
 
 instance FromEnv At.Number where
   fromEnv = fromEnv >=> At.parseOnly (At.signed At.number)
+
+-- | Checks to be sure that a variable is assigned, but ignores its value.
+instance FromEnv () where fromEnv _ = Right ()

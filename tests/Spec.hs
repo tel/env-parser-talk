@@ -10,6 +10,7 @@ import           Test.Hspec
 import           Test.Hspec.Expectations
 import           Test.QuickCheck
 import           Test.QuickCheck.Monadic
+import           Data.String
 
 -- | Generate a random, gibberish, @[a-zA-Z]@, and non-empty \"name\" of
 -- minimally-bounded length.
@@ -24,12 +25,12 @@ main = hspec $ do
   describe "Parsing" $ do
     describe "Basics" $ do
       it "should be able to find the \"PATH\" variable" $ do
-        void (Env.parse (Env.get "PATH")) `shouldReturn` ()
+        void (Env.parse (Env.get "PATH" :: Env.Parser Int)) `shouldReturn` ()
 
       -- This test is unstable since we'd like to eliminate the
       -- error-throwing failure API, but for now here it is.
       it "should not be able to find the \"da39a3ee5e6b4b0d3255bfef95601890afd80709\" variable" $ do
-        Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709")
+        Env.parse (Env.get "da39a3ee5e6b4b0d3255bfef95601890afd80709" :: Env.Parser Int)
           `shouldReturn` 
           (Left [( "da39a3ee5e6b4b0d3255bfef95601890afd80709"
                 , Env.MissingName
@@ -37,9 +38,9 @@ main = hspec $ do
 
       it "should report multiple missing variables" $ do
         Env.parse ((,) <$> Env.get "FIRST_MISSING_VALUE" 
-                      <*> Env.get "SECOND_MISSING_VALUE")
+                       <*> Env.get "SECOND_MISSING_VALUE" :: Env.Parser (Int, Int))
           `shouldReturn` 
-            (Left [ ( "FIRST_MISSING_VALUE", Env.MissingName )
+            (Left [ ( "FIRST_MISSING_VALUE" , Env.MissingName )
                   , ( "SECOND_MISSING_VALUE", Env.MissingName )
                   ])
 
@@ -49,18 +50,20 @@ main = hspec $ do
           val  <- pick (arbitraryNameBS 20)
           -- overwrites random ENV variables...
           val' <- run $ do setEnv name val True
-                          Env.parse (Env.get name)
+                           Env.parse (Env.get (Env.slot name) :: Env.Parser S.ByteString)
           assert (Right val == val')
 
       it "should find all of the needed names as a pure computation" $ do
         Env.deps ((,) <$> Env.get "FIRST_MISSING_VALUE"
-                      <*> Env.get "SECOND_MISSING_VALUE")
-          `shouldBe` ["FIRST_MISSING_VALUE", "SECOND_MISSING_VALUE"]
+                      <*> Env.get "SECOND_MISSING_VALUE" :: Env.Parser (Int, Int))
+          `shouldBe` [ ("FIRST_MISSING_VALUE", Nothing)
+                     , ("SECOND_MISSING_VALUE", Nothing)
+                     ]
 
-      it "holds that (Left . map (,Env.MissingName) . Env.deps == Env.test (const Nothing))" $
+      it "holds that (Left . map fixup . Env.deps == Env.test (const Nothing))" $
         property $ forAll (arbitraryNameBS 6) $ \e ->
-          let s = Env.get e
-              depErrs  = map (\n -> (n, Env.MissingName)) (Env.deps s)
+          let s        = Env.get (Env.slot e) :: Env.Parser Int
+              depErrs  = map (\(n, _doc) -> (n, Env.MissingName)) (Env.deps s)
               testErrs = Env.test (const Nothing) s
           in Left depErrs == testErrs
 

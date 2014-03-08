@@ -39,6 +39,7 @@ import qualified Network.HTTP.Types                 as Ht
 import qualified Network.URI                        as URI
 import           System.Environment.Parser.FromEnv
 import qualified System.Environment.Parser.Internal as Env
+import           System.Environment.Parser.Slot
 
 ----------------------------------------------------------------------------
 -- Heroku-style DB urls
@@ -71,7 +72,7 @@ class IsDbConnection a where
 -- | Look up a key containing a JSON value in the ENV. This operation may
 -- fail if the key is missing or if the value cannot be parsed according to
 -- its 'IsDbConnection' instance.
-dbconn :: IsDbConnection a => S.ByteString -> Env.Parser a
+dbconn :: IsDbConnection a => Slot a -> Env.Parser a
 dbconn = Env.get' (fromEnv >=> fromDBConn)
 
 -- | A type representing the information that can be parsed from

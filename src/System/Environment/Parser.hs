@@ -52,9 +52,12 @@ module System.Environment.Parser (
   , test
   , deps
   , get, json, read
+  , Slot, slot
+  , key, doc, def
 
 ) where
 
 import           Prelude                            hiding (read)
 import           System.Environment.Parser.FromEnv
 import           System.Environment.Parser.Internal
+import           System.Environment.Parser.Slot

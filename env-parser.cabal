@@ -41,6 +41,7 @@ library
     System.Environment.Parser.Internal
     System.Environment.Parser.Internal.Collect
     System.Environment.Parser.Internal.FreeA
+    System.Environment.Parser.Slot
 
   build-depends:       base >=4.6 && <4.7
                      , aeson
