@@ -1,3 +1,7 @@
+* Added the parsing of Heroku-style database connections
+
+---
+
 * Added a class of environment parseable values which Env.get tries to 
   deserialize to.
   * Includes String, ByteString, and Text 

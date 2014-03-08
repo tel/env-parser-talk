@@ -36,6 +36,7 @@ cabal-version:       >=1.10
 library
   exposed-modules:
     System.Environment.Parser
+    System.Environment.Parser.DBConn
     System.Environment.Parser.FromEnv
     System.Environment.Parser.Internal
     System.Environment.Parser.Internal.Collect
@@ -45,6 +46,9 @@ library
                      , aeson
                      , attoparsec
                      , bytestring
+                     , containers
+                     , http-types
+                     , network
                      , scientific
                      , text
                      , unix
