@@ -1,3 +1,12 @@
+* Added a class of environment parseable values which Env.get tries to 
+  deserialize to.
+  * Includes String, ByteString, and Text 
+  * Includes many numeric types
+  * Includes Haskell values (parse with 'read')
+  * Includes JSON values (parse with 'json')
+
+---
+
 * Generalized the error conditions on parser failure to include a parsing error
   This is there things get interesting!
 

@@ -36,12 +36,17 @@ cabal-version:       >=1.10
 library
   exposed-modules:
     System.Environment.Parser
+    System.Environment.Parser.FromEnv
     System.Environment.Parser.Internal
     System.Environment.Parser.Internal.Collect
     System.Environment.Parser.Internal.FreeA
 
   build-depends:       base >=4.6 && <4.7
+                     , aeson
+                     , attoparsec
                      , bytestring
+                     , scientific
+                     , text
                      , unix
 
   hs-source-dirs:      src

@@ -99,4 +99,7 @@ env-parser-talk
 		[X] Use the 'bytestring package
 		[X] Upgrade parser to use ByteString
 		[X] Expand error types to include parse errors
-		[_] Create a typeclass for ENV parseable types
+		[X] Create a typeclass for ENV parseable types
+		[X] Update parse/test machinery to parse after getting
+		[X] Parse JSON values
+		[X] Parse Haskell values
