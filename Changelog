@@ -1,3 +1,8 @@
+* Massive overhaul of the test suite. What's especially important about
+  this is it lays plans for each type which FromEnv should instantiate.
+
+---
+
 * Created the Slot type which expands upon the idea that we reference
   environment variables by names with information about default values 
   or documentation.

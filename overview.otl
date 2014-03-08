@@ -103,3 +103,5 @@ env-parser-talk
 		[X] Update parse/test machinery to parse after getting
 		[X] Parse JSON values
 		[X] Parse Haskell values
+	Impv: Slots
+		[_] Add Show instances so that we can describe the default value
