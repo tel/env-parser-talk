@@ -16,7 +16,6 @@ import           Control.Applicative
 import           Control.Monad
 import qualified Data.Aeson                                 as Ae
 import qualified Data.ByteString                            as S
-import qualified Data.Text                                  as T
 import           System.Environment.Parser.FromEnv
 import           System.Environment.Parser.Internal.Collect
 import           System.Environment.Parser.Internal.FreeA
@@ -81,9 +80,9 @@ read = get' go where
 
 -- | Compute all ENV variables which are required in order to run
 -- a 'Parser'.
-deps :: Parser a -> [(S.ByteString, Maybe T.Text, Maybe String)]
+deps :: Parser a -> [ASlot]
 deps = getConst . raise phi . unParser where
-  phi g = let s = getSlot g in Const [(getKey s, getDoc s, shownDef s)]
+  phi g = Const [ASlot (getSlot g)]
 
 -- | The core error handling component used in both 'parse' and 'test'
 run :: ParserF b
