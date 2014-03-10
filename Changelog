@@ -3,6 +3,7 @@
   defaults during analysis, but won't get in the way of fmapping our way out
   of the Show Hask subcategory.
 * Provide a Slot type which has forgotten its default value.
+* Added a pretty printer for Slots
 
 ---
 

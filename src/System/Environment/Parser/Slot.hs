@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveFunctor             #-}
+{-# LANGUAGE DeriveFunctor #-}
 
 -- |
 -- Module      :  System.Environment.Parser.Slot
@@ -42,13 +42,16 @@ module System.Environment.Parser.Slot (
   -- * Slot contruction
   Slot, slot, slot'
 
-  -- * Lensy construction kit
+  -- * Slot examination
+  , pp
+
+  -- ** Lensy construction kit
   , key
   , doc
   , def
   , def'
 
-  -- * Simplified getter interface
+  -- ** Simplified getter interface
   , getKey
   , getDoc
   , getDef
@@ -63,9 +66,11 @@ module System.Environment.Parser.Slot (
 
 import           Control.Applicative
 import           Control.Arrow
-import qualified Data.ByteString     as S
+import qualified Data.ByteString         as S
+import qualified Data.ByteString.Char8   as S8
 import           Data.String
-import qualified Data.Text           as T
+import qualified Data.Text               as T
+import qualified Text.PrettyPrint.Leijen as Pp
 
 -- | A 'Slot' describes a name and value expected to be in the environment.
 -- 'Slot' instantiates 'IsString' so that, at its simplest, it's possible
@@ -89,7 +94,7 @@ instance Show (Slot a) where
     saySlot . sp . showsPrec (i + 11) k
             . sp . showsPrec (i + 11) d
             . sp . showsPrec (i + 11) (fst <$> a)
-        
+
     where
       saySlot = ("Slot" ++)
       sp      = (" " ++)
@@ -111,15 +116,35 @@ slot' :: Show a => S.ByteString -> Maybe T.Text -> Maybe a -> Slot a
 slot' k d a = Slot k d (fix <$> a) where
   fix x = (show x, x)
 
+-- | Pretty-prints a 'Slot' for demonstration purposes.
+pp :: Slot a -> Pp.Doc
+pp s = Pp.text (S8.unpack $ get key s) 
+       Pp.<$>
+       Pp.indent 4 (docs Pp.</> defs)
+
+  where
+    docs = case get doc s of
+      Nothing -> Pp.empty
+      Just d  -> 
+        Pp.fillSep $ map (Pp.text . T.unpack) (T.words d)
+    defs = case get def' s of
+      Nothing       -> Pp.empty
+      Just (str, _) -> 
+        Pp.text "(default:"
+        Pp.<+> 
+        Pp.text str
+        Pp.<+> 
+        Pp.text ")"
+
 -- | Lens focusing on the 'key' representing a slot, the name of the
 -- environment variable.
-key :: Functor f => (S.ByteString -> f S.ByteString) 
+key :: Functor f => (S.ByteString -> f S.ByteString)
                  -> Slot a -> f (Slot a)
 key inj (Slot k d a) = (\x -> Slot x d a) <$> inj k
 {-# INLINE key #-}
 
 -- | Lens focusing on the 'doc'umentation for a particular slot.
-doc :: Functor f => (Maybe T.Text -> f (Maybe T.Text)) 
+doc :: Functor f => (Maybe T.Text -> f (Maybe T.Text))
                  -> Slot a -> f (Slot a)
 doc inj (Slot k d a) = (\x -> Slot k x a) <$> inj d
 {-# INLINE doc #-}
@@ -134,7 +159,7 @@ def' inj (Slot k d a) = Slot k d <$> inj a
 -- | Lens focusing on the 'def'ault value a particular slot.
 def :: ( Functor f, Show b ) => (Maybe a -> f (Maybe b))
                              -> Slot a -> f (Slot b)
-def inj (Slot k d a) = 
+def inj (Slot k d a) =
   (\x -> Slot k d ((show &&& id) <$> x)) <$> inj (snd <$> a)
 {-# INLINE def #-}
 
