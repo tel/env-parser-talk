@@ -82,7 +82,7 @@ read = get' go where
 -- a 'Parser'.
 deps :: Parser a -> [ASlot]
 deps = getConst . raise phi . unParser where
-  phi g = Const [ASlot (getSlot g)]
+  phi g = Const [aSlot (getSlot g)]
 
 -- | The core error handling component used in both 'parse' and 'test'
 run :: ParserF b

@@ -1,9 +1,4 @@
 {-# LANGUAGE DeriveFunctor             #-}
-{-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE FlexibleInstances         #-}
-{-# LANGUAGE FunctionalDependencies    #-}
-{-# LANGUAGE MultiParamTypeClasses     #-}
-{-# LANGUAGE ScopedTypeVariables       #-}
 
 -- |
 -- Module      :  System.Environment.Parser.Slot
@@ -44,18 +39,24 @@
 
 module System.Environment.Parser.Slot (
 
-  Slot, slot, slot', ASlot (ASlot)
+  -- * Slot contruction
+  Slot, slot, slot'
 
+  -- * Lensy construction kit
+  , key
+  , doc
   , def
-  , IsSlot (..)
-  , IsSimpleSlot (..)
-  , shownDef
+  , def'
 
+  -- * Simplified getter interface
   , getKey
   , getDoc
   , getDef
+  , shownDef
   , getDef'
 
+  -- * Anonymous slots
+  , ASlot, aSlot
   , X
 
 ) where
@@ -65,23 +66,6 @@ import           Control.Arrow
 import qualified Data.ByteString     as S
 import           Data.String
 import qualified Data.Text           as T
-import           Unsafe.Coerce
-
-class IsSimpleSlot s where
-  -- | Lens focusing on the 'key' representing a slot, the name of the
-  -- environment variable.
-  key :: Functor f => (S.ByteString -> f S.ByteString) -> s -> f s
-  -- | Lens focusing on the 'doc'umentation for a particular slot.
-  doc :: Functor f => (Maybe T.Text -> f (Maybe T.Text)) -> s -> f s
-
-class (IsSimpleSlot s, IsSimpleSlot t)
-      => IsSlot s t a b | s   -> a
-                        , t   -> b
-                        , s b -> t
-                        , t a -> s where
-  -- | Lens focusing on the 'def'ault value a particular slot.
-  def' :: Functor f => (Maybe (String, a) -> f (Maybe (String, b)))
-                   -> s -> f t
 
 -- | A 'Slot' describes a name and value expected to be in the environment.
 -- 'Slot' instantiates 'IsString' so that, at its simplest, it's possible
@@ -98,7 +82,21 @@ data Slot a
   = Slot {-# UNPACK #-} !S.ByteString
                         !(Maybe T.Text)
                         !(Maybe (String, a))
-  deriving ( Eq, Ord, Show, Read, Functor )
+  deriving ( Eq, Ord, Read, Functor )
+
+instance Show (Slot a) where
+  showsPrec i (Slot k d a) = showsParen (i > 10) $
+    saySlot . sp . showsPrec (i + 11) k
+            . sp . showsPrec (i + 11) d
+            . sp . showsPrec (i + 11) (fst <$> a)
+        
+    where
+      saySlot = ("Slot" ++)
+      sp      = (" " ++)
+      par     = ("(" ++)
+      rap     = (")" ++)
+      showsParen True  f = par . f . rap
+      showsParen False f = f
 
 -- | Builds a 'Slot' from its 'key' directly. This is necessary when it's
 -- either desirable or necessary to avoid @OverloadedStrings@.
@@ -113,29 +111,34 @@ slot' :: Show a => S.ByteString -> Maybe T.Text -> Maybe a -> Slot a
 slot' k d a = Slot k d (fix <$> a) where
   fix x = (show x, x)
 
-instance IsSimpleSlot (Slot a) where
-  key inj (Slot k d a) = (\x -> Slot x d a) <$> inj k
-  {-# INLINE key #-}
-  doc inj (Slot k d a) = (\x -> Slot k x a) <$> inj d
-  {-# INLINE doc #-}
+-- | Lens focusing on the 'key' representing a slot, the name of the
+-- environment variable.
+key :: Functor f => (S.ByteString -> f S.ByteString) 
+                 -> Slot a -> f (Slot a)
+key inj (Slot k d a) = (\x -> Slot x d a) <$> inj k
+{-# INLINE key #-}
 
-instance IsSlot (Slot a) (Slot b) a b where
-  def' inj (Slot k d a) = (\x -> Slot k d x) <$> inj a
-  {-# INLINE def' #-}
+-- | Lens focusing on the 'doc'umentation for a particular slot.
+doc :: Functor f => (Maybe T.Text -> f (Maybe T.Text)) 
+                 -> Slot a -> f (Slot a)
+doc inj (Slot k d a) = (\x -> Slot k x a) <$> inj d
+{-# INLINE doc #-}
 
-def :: forall f s t a b
-     .  ( IsSlot s t a b
-        , Functor f
-        , Show b
-        )
-     => (Maybe a -> f (Maybe b))
-     -> s -> f t
-def = def' . le where
-  le :: (Maybe a -> f (Maybe b))
-     -> Maybe (String, a) -> f (Maybe (String, b))
-  le inj p = (\b -> (show &&& id) <$> b) <$> inj (snd <$> p)
+-- | Lens focusing on the 'def'ault value a particular slot, but also
+-- allowing explicit choice of the value\'s 'String' representation.
+def' :: Functor f => (Maybe (String, a) -> f (Maybe (String, b)))
+                  -> Slot a -> f (Slot b)
+def' inj (Slot k d a) = Slot k d <$> inj a
+{-# INLINE def' #-}
 
-shownDef :: IsSlot s s a a => s -> Maybe String
+-- | Lens focusing on the 'def'ault value a particular slot.
+def :: ( Functor f, Show b ) => (Maybe a -> f (Maybe b))
+                             -> Slot a -> f (Slot b)
+def inj (Slot k d a) = 
+  (\x -> Slot k d ((show &&& id) <$> x)) <$> inj (snd <$> a)
+{-# INLINE def #-}
+
+shownDef :: Slot a -> Maybe String
 shownDef = fmap fst . getDef'
 
 type Lensy f s a = (a -> f a) -> s -> f s
@@ -148,17 +151,16 @@ simply :: (Lensy f s a -> r) -> Lensy f s a -> r
 simply = id
 {-# INLINE simply #-}
 
--- | A default value
 getDef :: Slot a -> Maybe a
 getDef = fmap snd . getDef'
 
-getDef' :: IsSlot s s a a => s -> Maybe (String, a)
+getDef' :: Slot a -> Maybe (String, a)
 getDef' = simply get def'
 
-getKey :: IsSlot s s a a => s -> S.ByteString
+getKey :: Slot a -> S.ByteString
 getKey = get key
 
-getDoc :: IsSlot s s a a => s -> Maybe T.Text
+getDoc :: Slot a -> Maybe T.Text
 getDoc = get doc
 
 instance IsString (Slot a) where fromString = slot . fromString
@@ -167,33 +169,13 @@ instance IsString (Slot a) where fromString = slot . fromString
 -- This is useful for summarization of a Parser since when we break the
 -- Parser apart into the constituent slots they will not, in general, share
 -- types.
-data ASlot = forall a . ASlot (Slot a)
+type ASlot = Slot X
 
-instance Show ASlot where
-  show (ASlot (Slot k d a)) =
-    unwords [ "ASlot"
-            , show k
-            , show d
-            , show (fst <$> a)
-            ]
-
-instance IsSimpleSlot ASlot where
-  key inj (ASlot (Slot k d a)) = (\x -> ASlot (Slot x d a)) <$> inj k
-  {-# INLINE key #-}
-  doc inj (ASlot (Slot k d a)) = (\x -> ASlot (Slot k x a)) <$> inj d
-  {-# INLINE doc #-}
+aSlot :: Slot a -> ASlot
+aSlot = fmap (const X)
 
 -- | A constructor which holds a forgotten type. The only point of this
 -- type is to ensure that you can't see inside of it. In order to return
 -- one, you must be handed it, so you can think of it as a universally
 -- quantified type variable.
-data X = forall a . X a
-
-instance IsSlot ASlot ASlot X X where
-  def' inj (ASlot (Slot k d a)) =
-    (\x -> ASlot (Slot k d (annex <$> x))) <$> inj (ex <$> a)
-      where
-        ex (s, x) = (s, X x)
-        annex (s, X x) = (s, unsafeCoerce x)
-  {-# INLINE def' #-}
-
+data X = X
