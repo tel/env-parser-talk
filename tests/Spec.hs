@@ -53,6 +53,7 @@ main = hspec $ do
   describe "Documentation" $ do
     it "should have tests" 
       $ pendingWith "documentation interface design/alternative instance"
+    it "should show defaults properly" pending
 
 
   -- Deserialization is "parsing", except that we already used that term.

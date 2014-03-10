@@ -21,7 +21,22 @@
 -- > "TIME_ZONE" & Env.doc .~ "The default time zone"
 -- >             & Env.def .~ "America/New_York"
 
-module System.Environment.Parser.Slot where
+module System.Environment.Parser.Slot (
+
+  Slot, slot
+
+  , key
+  , doc
+  , def
+  , def'
+  , shownDef
+
+  , getKey
+  , getDoc
+  , getDef
+  , getDef'
+                                      
+) where
 
 import           Control.Applicative
 import qualified Data.ByteString     as S
@@ -40,9 +55,12 @@ import qualified Data.Text           as T
 -- > "TIME_ZONE" & Env.doc .~ "The default time zone"
 -- >             & Env.def .~ "America/New_York"
 data Slot a = Slot 
-  { getKey :: {-# UNPACK #-} !S.ByteString   -- ^ The environment variable name
-  , getDoc ::                !(Maybe T.Text) -- ^ Description of the value
-  , getDef ::                !(Maybe a)      -- ^ A default value
+  { getKey  :: {-# UNPACK #-} !S.ByteString   
+  -- ^ The environment variable name
+  , getDoc  ::                !(Maybe T.Text)      
+  -- ^ Description of the value
+  , getDef' ::                !(Maybe (String, a)) 
+  -- ^ A default value and what it looks like
   }
   deriving ( Eq, Ord, Show, Read, Functor )
 
@@ -61,7 +79,22 @@ doc :: Functor f => (Maybe T.Text -> f (Maybe T.Text)) -> Slot a -> f (Slot a)
 doc inj (Slot k d a) = (\x -> Slot k x a) <$> inj d
 
 -- | Lens focusing on the 'def'ault value a particular 'Slot'.
-def :: Functor f => (Maybe a -> f (Maybe b)) -> Slot a -> f (Slot b)
-def inj (Slot k d a) = Slot k d <$> inj a
+def :: (Show b, Functor f) 
+    => (Maybe a -> f (Maybe b)) -> Slot a -> f (Slot b)
+def inj (Slot k d a) = (\x -> Slot k d (fix <$> x)) <$> inj (snd <$> a)
+  where fix v = (show v, v)
+
+def' :: (Functor f) 
+     => (Maybe (String, a) -> f (Maybe (String, b)))
+     -> Slot a -> f (Slot b)
+def' inj (Slot k d a) = Slot k d <$> inj a
+
+shownDef :: Slot a -> Maybe String
+shownDef = fmap fst . getDef'
+
+-- | A default value
+getDef :: Slot a -> Maybe a
+getDef = fmap snd . getDef'
+
 
 instance IsString (Slot a) where fromString = slot . fromString

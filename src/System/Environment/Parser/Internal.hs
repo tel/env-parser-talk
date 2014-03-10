@@ -81,9 +81,9 @@ read = get' go where
 
 -- | Compute all ENV variables which are required in order to run
 -- a 'Parser'.
-deps :: Parser a -> [(S.ByteString, Maybe T.Text)]
+deps :: Parser a -> [(S.ByteString, Maybe T.Text, Maybe String)]
 deps = getConst . raise phi . unParser where
-  phi g = let s = getSlot g in Const [(getKey s, getDoc s)]
+  phi g = let s = getSlot g in Const [(getKey s, getDoc s, shownDef s)]
 
 -- | The core error handling component used in both 'parse' and 'test'
 run :: ParserF b
