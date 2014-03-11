@@ -52,11 +52,25 @@ instance Seminearring b => Alternative (K b) where
   empty = K sempty
   K a <|> K b = K (a <+> b)
 
+-- |
+-- Define equality of FreeSNR using theorems for equality of regular
+-- expressions
+--
+-- <http://www21.in.tum.de/~krauss/papers/rexp.pdf>
+--
+-- Also contains some normalization theorems given associativity,
+-- commutativity, idempotence---can these be weakened appropriately?
+--
+-- <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.36.6774&rep=rep1&type=pdf>
+-- 
+-- Also potentially of interest:
+-- <http://www.mimuw.edu.pl/~bojan/papers/treealgs.pdf>
+--
 data FreeSNR a
   = The a
   | And (Seq (FreeSNR a))
   | Or  (Seq (FreeSNR a))
-  deriving (Eq, Ord, Show)
+  deriving ( Show )
 
 instance Monoid (FreeSNR a) where
   mempty                    = And mempty
@@ -115,15 +129,15 @@ instance Monoid e => Alternative (Collect e) where
   l                 <|> Collect (Left _) = l
   Collect (Right x) <|> _                = Collect (Right x)
 
+instance Monoid e => Monoid (Collect e a) where
+  mempty  = empty
+  mappend = (<|>)
+
 miss :: e -> Collect e a
 miss = Collect . Left
 
 have :: a -> Collect e a
 have = Collect . Right
-
--- | Uses 'maybe' to convert a 'Maybe' to a 'Collect'.
-collMay :: e -> (a -> b) -> Maybe a -> Collect e b
-collMay e f = maybe (miss e) (have . f)
 
 -- | Right-to-left composition of functors. The composition of applicative
 -- functors is always applicative, but the composition of monads is not
