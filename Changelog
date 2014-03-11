@@ -1,3 +1,12 @@
+* Change slot semantics so that it keeps along with it a shown 
+  representation of any default value. This will allow us to show these
+  defaults during analysis, but won't get in the way of fmapping our way out
+  of the Show Hask subcategory.
+* Provide a Slot type which has forgotten its default value.
+* Added a pretty printer for Slots
+
+---
+
 * Massive overhaul of the test suite. What's especially important about
   this is it lays plans for each type which FromEnv should instantiate.
 

@@ -52,8 +52,8 @@ module System.Environment.Parser (
   , test
   , deps
   , get, json, read
-  , Slot, slot
-  , key, doc, def
+  , Slot, slot, slot'
+  , key, doc, def, def', shownDef
 
 ) where
 
