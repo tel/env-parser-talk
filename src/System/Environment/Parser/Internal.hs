@@ -39,7 +39,7 @@ instance Functor ParserF where
 -- | The 'Parser' type is an effectual context where you can use ENV
 -- information to build a value containing configuration information.
 newtype Parser a = Parser { unParser :: FreeA ParserF a }
-  deriving ( Functor, Applicative )
+  deriving ( Functor, Applicative, Alternative )
 
 -- | If a 'parse' (or 'test') fails then all of the runtime errors are
 -- collected. 'Error' classifies these various kinds of errors.
@@ -80,9 +80,13 @@ read = get' go where
 
 -- | Compute all ENV variables which are required in order to run
 -- a 'Parser'.
-deps :: Parser a -> [ASlot]
-deps = getConst . raise phi . unParser where
-  phi g = Const [aSlot (getSlot g)]
+deps :: Parser a -> Maybe [ASlot]
+deps = first . ann
+
+-- | Retrieve the free semi-nearring 'Slot' annotation which describes how
+-- the whole 'Parser' operates.
+ann :: Parser a -> FreeSNR ASlot
+ann = uK . raise (K . The . aSlot . getSlot) . unParser
 
 -- | The core error handling component used in both 'parse' and 'test'
 run :: ParserF b

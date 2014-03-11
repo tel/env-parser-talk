@@ -22,7 +22,8 @@ data ConfBad = ConfBad
   deriving ( Show )
 
 confGood :: Env.Parser ConfGood
-confGood = ConfGood <$> Env.get "PATH" <*> Env.get "TERM"
+confGood = ConfGood <$> (Env.get "PATH" <|> Env.get "path") 
+                    <*> (Env.get "TERM" <|> Env.get "term")
 
 confBad :: Env.Parser ConfBad
 confBad = ConfBad <$> Env.get "SERVER_NAME" <*> Env.get "TIME_ZONE"
